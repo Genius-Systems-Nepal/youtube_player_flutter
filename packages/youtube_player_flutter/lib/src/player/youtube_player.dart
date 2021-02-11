@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:youtube_player_flutter/src/widgets/open_in_youtube_button.dart';
 
 import '../enums/thumbnail_quality.dart';
 import '../utils/errors.dart';
@@ -314,12 +315,12 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
               },
             ),
           ),
-          if (!controller.flags.hideThumbnail)
-            AnimatedOpacity(
-              opacity: controller.value.isPlaying ? 0 : 1,
-              duration: const Duration(milliseconds: 300),
-              child: widget.thumbnail ?? _thumbnail,
-            ),
+          // if (!controller.flags.hideThumbnail)
+          //   AnimatedOpacity(
+          //     opacity: controller.value.isPlaying ? 0 : 1,
+          //     duration: const Duration(milliseconds: 300),
+          //     child: widget.thumbnail ?? _thumbnail,
+          //   ),
           if (!controller.value.isFullScreen &&
               !controller.flags.hideControls &&
               controller.value.position > const Duration(milliseconds: 100) &&
@@ -372,6 +373,7 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
                                 ),
                                 RemainingDuration(),
                                 const PlaybackSpeedButton(),
+                                OpenInYoutubeButton(controller),
                                 FullScreenButton(),
                               ],
                         ),
@@ -406,27 +408,4 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
       ),
     );
   }
-
-  Widget get _thumbnail => Image.network(
-        YoutubePlayer.getThumbnail(
-          videoId: controller.metadata.videoId.isEmpty
-              ? controller.initialVideoId
-              : controller.metadata.videoId,
-        ),
-        fit: BoxFit.cover,
-        loadingBuilder: (_, child, progress) =>
-            progress == null ? child : Container(color: Colors.black),
-        errorBuilder: (context, _, __) => Image.network(
-          YoutubePlayer.getThumbnail(
-            videoId: controller.metadata.videoId.isEmpty
-                ? controller.initialVideoId
-                : controller.metadata.videoId,
-            webp: false,
-          ),
-          fit: BoxFit.cover,
-          loadingBuilder: (_, child, progress) =>
-              progress == null ? child : Container(color: Colors.black),
-          errorBuilder: (context, _, __) => Container(),
-        ),
-      );
 }
