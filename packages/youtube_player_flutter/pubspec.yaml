@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_inappwebview: '>=4.0.0 <5.0.0'
+  url_launcher: ^5.7.10
 
 dev_dependencies:
   flutter_test:
@@ -23,3 +24,4 @@ flutter:
 
   assets:
     - assets/speedometer.webp
+    - misc/
