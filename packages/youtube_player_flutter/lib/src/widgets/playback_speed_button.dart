@@ -50,7 +50,7 @@ class _PlaybackSpeedButtonState extends State<PlaybackSpeedButton> {
         padding: const EdgeInsets.fromLTRB(8.0, 8.0, 0.0, 8.0),
         child: widget.icon ??
             Image.asset(
-              'assets/speedometer.webp',
+              'assets/playback_speed.png',
               package: 'youtube_player_flutter',
               width: 20.0,
               height: 20.0,
