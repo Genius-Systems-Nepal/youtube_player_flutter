@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import '../utils/youtube_player_controller.dart';
@@ -14,11 +16,16 @@ class FullScreenButton extends StatefulWidget {
   /// Defines color of the button.
   final Color color;
 
+  final Function enterFullScreen;
+
+  final Function exitFullScreen;
+
   /// Creates [FullScreenButton] widget.
-  FullScreenButton({
-    this.controller,
-    this.color = Colors.white,
-  });
+  FullScreenButton(
+      {this.controller,
+      this.color = Colors.white,
+      this.enterFullScreen,
+      this.exitFullScreen});
 
   @override
   _FullScreenButtonState createState() => _FullScreenButtonState();
@@ -62,7 +69,20 @@ class _FullScreenButtonState extends State<FullScreenButton> {
             : Icons.fullscreen,
         color: widget.color,
       ),
-      onPressed: () => _controller.toggleFullScreenMode(),
+      onPressed: () {
+        if (Platform.isIOS) {
+          if (_controller.value.isFullScreen) {
+            if (widget.exitFullScreen != null) {
+              widget.exitFullScreen();
+            }
+          } else {
+            if (widget.enterFullScreen != null) {
+              widget.enterFullScreen();
+            }
+          }
+        }
+        _controller.toggleFullScreenMode();
+      },
     );
   }
 }

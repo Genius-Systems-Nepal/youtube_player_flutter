@@ -133,6 +133,10 @@ class YoutubePlayer extends StatefulWidget {
   /// {@endtemplate}
   final bool showVideoProgressIndicator;
 
+  final Function enterFullScreen;
+
+  final Function exitFullScreen;
+
   /// Creates [YoutubePlayer] widget.
   const YoutubePlayer({
     this.key,
@@ -151,6 +155,8 @@ class YoutubePlayer extends StatefulWidget {
     this.actionsPadding = const EdgeInsets.all(8.0),
     this.thumbnail,
     this.showVideoProgressIndicator = false,
+    this.enterFullScreen,
+    this.exitFullScreen
   });
 
   /// Converts fully qualified YouTube Url to video id.
@@ -374,7 +380,10 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
                                 RemainingDuration(),
                                 const PlaybackSpeedButton(),
                                 OpenInYoutubeButton(controller),
-                                FullScreenButton(),
+                                FullScreenButton(
+                                  enterFullScreen: widget.enterFullScreen,
+                                  exitFullScreen: widget.exitFullScreen,
+                                ),
                               ],
                         ),
                       ),

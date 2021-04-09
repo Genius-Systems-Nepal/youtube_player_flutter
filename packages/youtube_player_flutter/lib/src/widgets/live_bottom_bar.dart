@@ -15,11 +15,15 @@ class LiveBottomBar extends StatefulWidget {
 
   /// Defines color for UI.
   final Color liveUIColor;
+  final Function enterFullScreen;
+  final Function exitFullScreen;
 
   /// Creates [LiveBottomBar] widget.
   LiveBottomBar({
     this.controller,
     @required this.liveUIColor,
+    this.exitFullScreen,
+    this.enterFullScreen,
   });
 
   @override
@@ -112,6 +116,8 @@ class _LiveBottomBarState extends State<LiveBottomBar> {
           ),
           FullScreenButton(
             controller: _controller,
+            enterFullScreen: widget.enterFullScreen,
+            exitFullScreen: widget.exitFullScreen,
           ),
         ],
       ),
