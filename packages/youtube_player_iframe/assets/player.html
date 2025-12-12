@@ -45,52 +45,59 @@
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
       var platform = "<<platform>>";
-      var host = "<<host>>";
-      var player;
-      var timerId;
+  var host = "<<host>>";
+  var videoId = "<<videoId>>";
+  var player;
+  var timerId;
 
-      function onYouTubeIframeAPIReady() {
-        player = new YT.Player("<<playerId>>", {
-          host: host,
-          playerVars: <<playerVars>>,
-          events: {
-            onReady: function (event) {
-              handleFullScreenForMobilePlatform();
-              sendMessage('Ready', event);
-            },
-            onStateChange: function (event) {
-              clearTimeout(timerId);
-              sendMessage('StateChange', event.data);
-              if (event.data == 1) {
-                timerId = setInterval(function () {
-                  var state = {
-                    'currentTime': player.getCurrentTime(),
-                    'loadedFraction': player.getVideoLoadedFraction()
-                  };
+  var playerConfig = {
+      host: host,
+      playerVars: <<playerVars>>,
+      events: {
+        onReady: function (event) {
+          handleFullScreenForMobilePlatform();
+          sendMessage('Ready', event);
+        },
+        onStateChange: function (event) {
+          clearTimeout(timerId);
+          sendMessage('StateChange', event.data);
+          if (event.data == 1) {
+            timerId = setInterval(function () {
+              var state = {
+                'currentTime': player.getCurrentTime(),
+                'loadedFraction': player.getVideoLoadedFraction()
+              };
 
-                  sendMessage('VideoState', JSON.stringify(state));
-                }, 100);
-              }
-            },
-            onPlaybackQualityChange: function (event) {
-              sendMessage('PlaybackQualityChange', event.data);
-            },
-            onPlaybackRateChange: function (event) {
-              sendMessage('PlaybackRateChange', event.data);
-            },
-            onApiChange: function (event) {
-              sendMessage('ApiChange', event.data);
-            },
-            onError: function (event) {
-              sendMessage('PlayerError', event.data);
-            },
-            onAutoplayBlocked: function (event) {
-              sendMessage('AutoplayBlocked', event.data);
-            },
-          },
-        });
-        player.setSize(window.innerWidth, window.innerHeight);
+              sendMessage('VideoState', JSON.stringify(state));
+            }, 100);
+          }
+        },
+        onPlaybackQualityChange: function (event) {
+          sendMessage('PlaybackQualityChange', event.data);
+        },
+        onPlaybackRateChange: function (event) {
+          sendMessage('PlaybackRateChange', event.data);
+        },
+        onApiChange: function (event) {
+          sendMessage('ApiChange', event.data);
+        },
+        onError: function (event) {
+          sendMessage('PlayerError', event.data);
+        },
+        onAutoplayBlocked: function (event) {
+          sendMessage('AutoplayBlocked', event.data);
+        },
       }
+  };
+
+  if(videoId) {
+      playerConfig['videoId'] = videoId;
+    }
+
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player("<<playerId>>", playerConfig);
+    player.setSize(window.innerWidth, window.innerHeight);
+  }
 
       window.addEventListener('message', (event) => {
         try {

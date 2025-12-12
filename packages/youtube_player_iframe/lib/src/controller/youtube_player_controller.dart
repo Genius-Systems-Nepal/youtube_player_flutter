@@ -4,6 +4,7 @@ import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:meta/meta.dart';
 import 'package:url_launcher/url_launcher.dart' as uri_launcher;
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
@@ -22,9 +23,13 @@ typedef YoutubeWebResourceError = WebResourceError;
 ///
 /// After [YoutubePlayerController.close] all further calls are ignored.
 class YoutubePlayerController implements YoutubePlayerIFrameAPI {
+  /// The YouTube video ID that identifies the video that the player will load
+  final String? initialVideoId;
+
   /// Creates [YoutubePlayerController].
   YoutubePlayerController({
     this.params = const YoutubePlayerParams(),
+    this.initialVideoId,
     ValueChanged<YoutubeWebResourceError>? onWebResourceError,
     this.key,
   }) {
@@ -77,7 +82,8 @@ class YoutubePlayerController implements YoutubePlayerIFrameAPI {
     double? startSeconds,
     double? endSeconds,
   }) {
-    final controller = YoutubePlayerController(params: params, key: videoId);
+    final controller = YoutubePlayerController(
+        params: params, key: videoId, initialVideoId: videoId);
 
     if (autoPlay) {
       controller.loadVideoById(
@@ -248,9 +254,10 @@ class YoutubePlayerController implements YoutubePlayerIFrameAPI {
   @internal
   Future<void> init() async {
     await load(
-      params: params,
-      baseUrl: kIsWeb ? Uri.base.origin : params.origin,
-      id: playerId,
+        params: params,
+        baseUrl: kIsWeb ? Uri.base.origin : params.origin,
+        id: playerId,
+        initialVideoId: initialVideoId
     );
 
     if (!_initCompleter.isCompleted) _initCompleter.complete();
@@ -259,10 +266,12 @@ class YoutubePlayerController implements YoutubePlayerIFrameAPI {
   /// Loads the player with the given [params].
   ///
   /// [baseUrl] sets the origin for the iframe player.
+  /// [initialVideoId] for the id to be provided while loading the html where the player is integrated.
   Future<void> load({
     required YoutubePlayerParams params,
     String? baseUrl,
     String id = 'player',
+    String? initialVideoId
   }) async {
     final platform = kIsWeb ? 'web' : defaultTargetPlatform.name.toLowerCase();
     final playerData = {
@@ -270,7 +279,8 @@ class YoutubePlayerController implements YoutubePlayerIFrameAPI {
       'pointerEvents': params.pointerEvents.name,
       'playerVars': params.toJson(),
       'platform': platform,
-      'host': params.origin ?? 'https://www.youtube.com',
+      'host': params.host ?? 'https://www.youtube-nocookie.com',
+      'videoId': initialVideoId ?? '',
     };
 
     await webViewController.loadHtmlString(
@@ -326,8 +336,11 @@ class YoutubePlayerController implements YoutubePlayerIFrameAPI {
   }
 
   /// The unique player id.
+  ///
+  /// Replaced ('-') as youtube no longer support
   @internal
-  String get playerId => 'Youtube${key ?? hashCode}';
+  String get playerId =>
+      'Youtube${initialVideoId ?? key ?? hashCode}'.replaceAll('-', '/-');
 
   /// MetaData for the currently loaded or cued video.
   YoutubeMetaData get metadata => _value.metaData;

@@ -97,6 +97,14 @@ class YoutubePlayerParams {
   /// Specify your domain as the value.
   final String? origin;
 
+  /// Primary identity of the embedding application.
+  /// YouTube uses this to validate that the player is allowed to load and play the video at all.
+  ///
+  /// Best to provide real domain of your app/website.
+  ///
+  /// Value https://www.youtube-nocookie.comLoads from privacy-enhanced domain, almost never blocked
+  final String? host;
+
   /// This parameter controls whether videos play inline or fullscreen in an HTML5 player on iOS.
   ///
   /// Default is true.
@@ -125,6 +133,7 @@ class YoutubePlayerParams {
     this.showVideoAnnotations = true,
     this.loop = false,
     this.origin = 'https://www.youtube.com',
+    this.host = 'https://www.youtube-nocookie.com',
     this.playsInline = true,
     this.strictRelatedVideos = false,
     this.userAgent,
